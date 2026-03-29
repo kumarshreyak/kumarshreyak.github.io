@@ -3,7 +3,7 @@
    Design system based on PERSONAL_WEBSITE_GUIDELINES.md
    ============================================ */
 
-/* --- DESIGN TOKENS --- */
+/* --- DESIGN TOKENS (dark theme — default) --- */
 :root {
   /* Background */
   --bg-base:     #0A0A0F;
@@ -36,6 +36,10 @@
   --status-warning: #FBBF24;
   --status-error:   #F87171;
 
+  /* Component-specific (avoids hardcoded values) */
+  --mobile-header-bg: rgba(10, 10, 15, 0.85);
+  --terminal-bg:      #0D0D14;
+
   /* Typography */
   --font-display: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --font-body:    'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
@@ -48,6 +52,7 @@
   --space-16:  16px;
   --space-20:  20px;
   --space-24:  24px;
+  --space-28:  28px;
   --space-32:  32px;
   --space-40:  40px;
   --space-48:  48px;
@@ -73,6 +78,68 @@
   --content-max:      720px;
   --grid-margin:      clamp(1.5rem, 5vw, 4rem);
   --section-gap:      clamp(80px, 12vw, 160px);
+}
+
+/* --- LIGHT THEME OVERRIDES --- */
+:root[data-theme="light"] {
+  /* Background */
+  --bg-base:     #F8F7F4;
+  --bg-surface:  #EFEFED;
+  --bg-elevated: #E5E4E2;
+  --bg-subtle:   #DDDCDA;
+
+  /* Text */
+  --text-primary:   #1A1A1A;
+  --text-secondary: #555555;
+  --text-tertiary:  #888888;
+  --text-disabled:  #BBBBBB;
+
+  /* Accent (purple stays the same — it works on both themes) */
+  --accent-subtle:  #EDE9FF;
+
+  /* Teal */
+  --teal-subtle: #DFFAF6;
+
+  /* Borders */
+  --border-default: #E0E0E0;
+  --border-subtle:  #EBEBEB;
+
+  /* Semantic */
+  --status-success: #16A34A;
+  --status-warning: #B45309;
+  --status-error:   #DC2626;
+
+  /* Component-specific */
+  --mobile-header-bg: rgba(248, 247, 244, 0.92);
+  --terminal-bg:      #1A1A24;
+}
+
+/* --- SMOOTH THEME TRANSITIONS --- */
+/* Applied broadly so the whole page animates when the theme switches.
+   We keep this low-specificity so individual component transitions still override. */
+body,
+.sidebar,
+.main-content,
+.mobile-header,
+.mobile-nav-overlay,
+.mobile-nav-link,
+.exp-card,
+.project-card,
+.stat-card,
+.edu-card,
+.tag,
+.footer,
+.project-terminal,
+.terminal-bar,
+.btn-secondary,
+.social-link,
+.theme-toggle,
+.skip-link,
+.section-header::after {
+  transition:
+    background-color var(--dur-slow) var(--ease-standard),
+    color var(--dur-slow) var(--ease-standard),
+    border-color var(--dur-slow) var(--ease-standard);
 }
 
 /* --- RESET & BASE --- */
@@ -167,7 +234,7 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
   z-index: 100;
   height: 64px;
   padding: 0 var(--space-24);
-  background: rgba(10, 10, 15, 0.85);
+  background: var(--mobile-header-bg);
   backdrop-filter: blur(12px) saturate(180%);
   -webkit-backdrop-filter: blur(12px) saturate(180%);
   border-bottom: 1px solid var(--border-subtle);
@@ -181,6 +248,13 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
   font-weight: 700;
   color: var(--text-primary);
   letter-spacing: -0.02em;
+}
+
+/* Group the right-side controls in mobile header */
+.mobile-header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
 }
 
 .hamburger {
@@ -252,6 +326,40 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
   transition: color var(--dur-normal) var(--ease-standard);
 }
 .mobile-nav-link:hover { color: var(--text-primary); }
+
+/* --- THEME TOGGLE BUTTON --- */
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  color: var(--text-tertiary);
+  background: transparent;
+  padding: 0;
+  transition:
+    color var(--dur-fast) var(--ease-standard),
+    background-color var(--dur-fast) var(--ease-standard),
+    transform var(--dur-normal) var(--ease-spring);
+}
+.theme-toggle:hover {
+  color: var(--text-primary);
+  background-color: var(--bg-elevated);
+  transform: rotate(20deg) scale(1.1);
+}
+.theme-toggle:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 3px;
+}
+
+/* Icon visibility: dark mode → show sun (click → go light) */
+/*                  light mode → show moon (click → go dark)  */
+.icon-sun  { display: block; }
+.icon-moon { display: none; }
+
+:root[data-theme="light"] .icon-sun  { display: none; }
+:root[data-theme="light"] .icon-moon { display: block; }
 
 /* --- HERO BLOCK --- */
 .hero-block {
@@ -392,6 +500,7 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
   display: flex;
   gap: var(--space-16);
   margin-top: auto;
+  align-items: center;
 }
 
 .social-link {
@@ -500,7 +609,7 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
-  transition: border-color var(--dur-normal), transform var(--dur-normal);
+  transition: border-color var(--dur-normal), transform var(--dur-normal), background-color var(--dur-slow);
 }
 .stat-card:hover {
   border-color: var(--accent-primary);
@@ -651,7 +760,8 @@ a.exp-company:hover { color: var(--accent-primary); }
   padding: var(--space-32);
   transition: border-color var(--dur-normal) var(--ease-standard),
               transform var(--dur-normal) var(--ease-standard),
-              box-shadow var(--dur-normal) var(--ease-standard);
+              box-shadow var(--dur-normal) var(--ease-standard),
+              background-color var(--dur-slow) var(--ease-standard);
 }
 .project-featured:hover {
   border-color: var(--accent-primary);
@@ -723,12 +833,14 @@ a.exp-company:hover { color: var(--accent-primary); }
 
 .project-terminal {
   width: 100%;
-  background: #0D0D14;
+  background: var(--terminal-bg);
   border: 1px solid var(--border-default);
   border-radius: 12px;
   overflow: hidden;
   font-family: var(--font-mono);
   font-size: 0.8125rem;
+  transition: background-color var(--dur-slow) var(--ease-standard),
+              border-color var(--dur-slow) var(--ease-standard);
 }
 
 .terminal-bar {
@@ -738,6 +850,7 @@ a.exp-company:hover { color: var(--accent-primary); }
   padding: var(--space-12) var(--space-16);
   background: var(--bg-subtle);
   border-bottom: 1px solid var(--border-subtle);
+  transition: background-color var(--dur-slow) var(--ease-standard);
 }
 
 .terminal-dot {
@@ -787,7 +900,8 @@ a.exp-company:hover { color: var(--accent-primary); }
   gap: var(--space-16);
   transition: border-color var(--dur-normal) var(--ease-standard),
               transform var(--dur-normal) var(--ease-standard),
-              box-shadow var(--dur-normal) var(--ease-standard);
+              box-shadow var(--dur-normal) var(--ease-standard),
+              background-color var(--dur-slow) var(--ease-standard);
 }
 .project-small:hover {
   border-color: var(--accent-primary);
@@ -878,7 +992,7 @@ a.exp-company:hover { color: var(--accent-primary); }
   border: 1px solid var(--border-default);
   border-radius: 12px;
   padding: var(--space-24) var(--space-28);
-  transition: border-color var(--dur-normal), transform var(--dur-normal);
+  transition: border-color var(--dur-normal), transform var(--dur-normal), background-color var(--dur-slow);
 }
 .edu-card:hover {
   border-color: var(--accent-primary);
@@ -1080,4 +1194,5 @@ a.exp-company:hover { color: var(--accent-primary); }
   .about-stats { grid-template-columns: 1fr 1fr; }
   .stat-card { padding: var(--space-16); }
   .stat-number { font-size: 1.25rem; }
+  .project-small-row { grid-template-columns: 1fr; }
 }
