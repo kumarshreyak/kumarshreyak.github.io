@@ -1,10 +1,48 @@
 /**
  * Shreyak Kumar — Personal Website
- * Vanilla JS: scroll reveals, active nav tracking, mobile menu
+ * Vanilla JS: theme toggle, scroll reveals, active nav tracking, mobile menu
  */
 
 (function () {
   'use strict';
+
+  /* ─── Theme Toggle ───────────────────────────────────────── */
+  const THEME_KEY    = 'sk-theme';
+  const toggleBtns   = document.querySelectorAll('.theme-toggle');
+  const metaThemeEl  = document.getElementById('metaThemeColor');
+
+  /**
+   * Apply a theme ('dark' | 'light') to the root element, persist to
+   * localStorage, and update the meta theme-color for mobile browsers.
+   */
+  function applyTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    try { localStorage.setItem(THEME_KEY, theme); } catch (e) {}
+    if (metaThemeEl) {
+      metaThemeEl.content = theme === 'light' ? '#F8F7F4' : '#0A0A0F';
+    }
+    // Sync aria-label on all toggle buttons
+    toggleBtns.forEach(btn => {
+      btn.setAttribute('aria-label',
+        theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'
+      );
+    });
+  }
+
+  function toggleTheme() {
+    const current = document.documentElement.getAttribute('data-theme') || 'dark';
+    applyTheme(current === 'dark' ? 'light' : 'dark');
+  }
+
+  // Apply saved theme on load (FOUC guard in <head> handles the very first paint;
+  // this call ensures aria-labels and meta are in sync once the DOM is ready).
+  (function initTheme() {
+    let saved;
+    try { saved = localStorage.getItem(THEME_KEY); } catch (e) {}
+    applyTheme(saved === 'light' ? 'light' : 'dark');
+  })();
+
+  toggleBtns.forEach(btn => btn.addEventListener('click', toggleTheme));
 
   /* ─── Mobile Nav ─────────────────────────────────────────── */
   const hamburgerBtn      = document.getElementById('hamburgerBtn');
